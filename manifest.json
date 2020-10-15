@@ -23,11 +23,12 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://pan.baidu.com/*"],
-      "js": ["js/contentscript.js"],
+      "matches": ["https://pan.baidu.com/play/*"],
+      "js": ["js/jquery.min.js", "js/contentscript.js"],
       "css": ["css/content.css"],
       "run_at": "document_start"
     }
   ],
+  "web_accessible_resources": ["js/injectscript.js"],
   "manifest_version": 2
 }

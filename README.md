@@ -82,21 +82,21 @@ chrome.runtime.getBackgroundPage(function (backgroundPage) {
   ```javascript
     // background.js
     chrome.runtime.onMessage.addListener(
-    function(message, callback) {
+    function(string message, callback) {
       if (message == "changeColor"){
         chrome.tabs.executeScript({
           code: 'document.body.style.backgroundColor="orange"'
         });
       }
-   });
-   // popup.js
-   chrome.runtime.sendMessage("changeColor", function(response) {
+    });
+    // popup.js
+    chrome.runtime.sendMessage("changeColor", function(response) {
       console.log(response.farewell);
     });
   ```
   - 声明式注入的脚本在清单的“content_scripts”字段下面注册。它们可以包含 JavaScript 文件、CSS 文件，或者两者都包含。所有自动运行的内容脚本都必须指定匹配模式。
     run_at 控制注入时机,默认 document_idle
-    content-script只能获取到原始页面dom，不能获取到js
+    content-script 只能获取到原始页面 dom，不能获取到 js
   ```json
    "content_scripts": [
    {
@@ -109,6 +109,21 @@ chrome.runtime.getBackgroundPage(function (backgroundPage) {
   ```
 - 与嵌入页面的通信
   通过 window.postMessage
+
+##### chrome 插件访问原始页面变量
+
+- 创建并插入 script 元素，执行其中 js 代码，可以传递消息或其他方式缓存书籍，然后删除元素.需注意，原始页面中的 js 变量可能不是立马生成，需要定时器延缓获取时机
+这种方式只能传递某些类型如字符串，简单对象等，函数等无法传递，即使使用消息机制，函数也无法克隆
+
+- 创建元素并设置 onclick 属性，实测在 chrome 插件中无效，元素无 onclick 方法
+
+- 终极大法：无论是什么方式传递，只能传递字符串或者JSON字符串
+  inject-script中创建元素，并通过addEventListener绑定原页面中的函数，在content-script中通过寻找该dom，并触发其事件，注意不能直接调用其onclick方法，其指向为null,后文会说到，chrome插件中在html中写的内联事件无效
+  然后这样也有问题，如果采用js原生，如注册click事件，是无法主动dispatch或trigger的，jquery提供了trigger主动触发事件
+
+  介绍一下inject-script和content-script之间的通信问题，因为页面(包括inject-script)和content-script处在两个沙盒，彼此不共享变量，无法互相访问，可以通过消息机制发送和接收；这里又遇到问题终止了，函数无法被克隆并传递，又回到最初的起点
+
+  在content-script中根据时机postMessage，inject-script中监听即可调用页面中函数或获取变量而无需传递
 
 #### chrome api
 
@@ -209,3 +224,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, reply) {
   chrome.runtime.onMessage.removeListener(event);
 });
 ```
+
+**background 和 popup 无法直接访问页面 dom，但是可以通过 chrome.tabs.executeScript 执行脚本，从而访问页面 dom，但也不能直接访问页面 js**
+
+**不支持将js写在内联html中，或者通过setAttribute形式**
