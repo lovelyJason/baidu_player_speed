@@ -125,6 +125,8 @@ chrome.runtime.getBackgroundPage(function (backgroundPage) {
 
   在content-script中根据时机postMessage，inject-script中监听即可调用页面中函数或获取变量而无需传递
 
+  注入的样式被称为injected stylesheet，在chrome开发工具中无法修改
+
 #### chrome api
 
 扩展程序除了可以访问与网页相同的 API 外，还可以使用特定于扩展程序的 API，这些 API 可以与浏览器紧密集成。 扩展程序和网页都可以访问标准 window.open（）方法来打开 URL，但是扩展程序可以使用 Chrome API tabs.create 方法来指定显示 URL 的窗口。

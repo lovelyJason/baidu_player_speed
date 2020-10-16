@@ -12,7 +12,7 @@ setTimeout(function() {
   document.body.appendChild(tmp)
   
   window.addEventListener("message", function(e) {
-    if(e.data && e.data.type === 'from_inject') {
+    if(e.data && e.data.type === 'to_inject') {
       var speed = e.data.speed
       speedFunc(speed)
     }

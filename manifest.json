@@ -1,7 +1,7 @@
 {
   "name": "百度云盘倍速播放助手",
   "version": "1.0",
-  "description": "Play the video at extra speed",
+  "description": "在线倍速播放百度网盘视频",
   "permissions": ["activeTab", "declarativeContent", "storage"],
   "background": {
     "scripts": ["background.js"],
