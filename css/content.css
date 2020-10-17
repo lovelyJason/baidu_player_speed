@@ -38,3 +38,33 @@
   background-position-x: 50%;
   background-position-y: 50%;
 }
+.btn-primary {
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  text-transform: uppercase;
+  transition: all 0.15s ease;
+  will-change: transform;
+  letter-spacing: 0.025em;
+  border-radius: 0.25rem;
+  color: #fff;
+  background-color: #5e72e4;
+  border-color: #5e72e4;
+  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  border: 1px solid transparent;
+}
+.btn-primary:hover {
+  -webkit-box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1),
+    0 3px 6px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+  -webkit-transform: translateY(-1px);
+  transform: translateY(-1px);
+}
+.layui-form-item > .layui-inline:last-child {
+  float: right;
+  line-height: 38px;
+}

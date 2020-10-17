@@ -33,6 +33,35 @@ function injectLayui() {
   // document.head.appendChild(script);
 }
 
+function getDownloadUrl() {
+  (function () { var _id = 309847; 
+    var tempArr = location.href.split('path=')[1].split('%2F')
+    var name = tempArr.slice(-1)[0].split('&')[0]
+    var path = tempArr.slice(0, -1).join('%2F')   // 如  /文件夹
+    console.log(path, '---', _name)
+
+    var isHome = $('a[title="我的卡包"]').html(); 
+    // var _temp = isHome ? "" : $('span[title*="全部文件"]')[0].title.slice(4); 
+    var _temp = isHome ? "" : path; 
+    var _name = name; 
+    var _path = encodeURIComponent(_temp + '/' + _name); 
+    var _link = 'https://pcs.baidu.com/rest/2.0/pcs/file?method=download&app_id=' + _id + '&path=' + _path; console.log('下载地址为：'); 
+    console.log('%c%s', 'color:#00ff00;background-color:red;', _link); })();
+}
+
+function copy(e) {
+  let transfer = document.createElement('input');
+  document.body.appendChild(transfer);
+  transfer.value = '1111';  // 这里表示想要复制的内容
+  transfer.focus();
+  transfer.select();
+  if (document.execCommand('copy')) {
+    document.execCommand('copy');
+  }
+  transfer.blur();
+  document.body.removeChild(transfer);
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   injectLayui()
   injectCustomJs(null, function () {
@@ -82,6 +111,9 @@ document.addEventListener('DOMContentLoaded', function () {
           </div>
         </div>
       </div>
+      <div class="layui-inline">
+        <button id="copy_download_link" type="button" class="btn-primary">提取下载直链</button>
+      </div>
     </div>
   </div>`)[0]
   videoContent.insertBefore(btns, videoWrapOuter)
@@ -93,36 +125,41 @@ document.addEventListener('DOMContentLoaded', function () {
   $('#video-wrap-outer').append(`<div class="suspended-ball movable" id="moveDiv">
     <div id="inner"></div>
   </div>`)
-  $('#bnts-group button').on('click', function(e) {
+  // 获取大文件直链
+  getDownloadUrl()
+  $('#bnts-group button').on('click', function (e) {
     var current = e.currentTarget
     var speed = parseInt(current.dataset.value)
     $(this).addClass('layui-btn-warm').siblings().removeClass('layui-btn-warm')
+    // 下拉列表保持和按钮组一致
+    $('.layui-select-tips').addClass('layui-this').siblings().removeClass('layui-this')
+    $('.layui-input').val('')
     window.postMessage({ type: 'to_inject', speed: speed }, '*')
   })
-  $('.layui-form-select').on('click', function(e) {
+  $('.layui-form-select').on('click', function (e) {
     var classNames = $(this).prop('className')
-    if(classNames.includes('layui-form-selected')) {
+    if (classNames.includes('layui-form-selected')) {
       $(this).removeClass('layui-form-selected')
     } else {
       $(this).addClass('layui-form-selected')
     }
   })
-  $('.layui-anim dd').on('click', function(e) {
+  $('.layui-anim dd').on('click', function (e) {
     $(this).addClass('layui-this').siblings().removeClass('layui-this')
     var speed = $(this).text()
     $('.layui-input').val(speed)
-    if($(`button[data-value="${speed}"]`).length > 0) {
+    if ($(`button[data-value="${speed}"]`).length > 0) {
       $(`button[data-value="${speed}"]`).addClass('layui-btn-warm').siblings().removeClass('layui-btn-warm')
     } else {
       $('.layui-btn').removeClass('layui-btn-warm')
     }
-    if(!isNaN(parseFloat(speed))) {
+    if (!isNaN(parseFloat(speed))) {
       window.postMessage({ type: 'to_inject', speed: speed }, '*')
     }
   })
-  $('.layui-form-switch').on('click', function(e) {
+  $('.layui-form-switch').on('click', function (e) {
     var classNames = $(this).prop('className')
-    if(classNames.includes('layui-form-onswitch')) {
+    if (classNames.includes('layui-form-onswitch')) {
       $(this).removeClass('layui-form-onswitch')
       $('.layui-form-switch em').text('OFF')
       $('.suspended-ball').css('display', 'none')
@@ -131,5 +168,10 @@ document.addEventListener('DOMContentLoaded', function () {
       $('.layui-form-switch em').text('ON')
       $('.suspended-ball').css('display', 'inline-block')
     }
+  })
+  $('#copy_download_link').on('click', function (e) {
+    e.preventDefault();
+ 
+    // copy()
   })
 })
