@@ -34,25 +34,36 @@ function injectLayui() {
 }
 
 function getDownloadUrl() {
-  (function () { var _id = 309847; 
-    var tempArr = location.href.split('path=')[1].split('%2F')
-    var name = tempArr.slice(-1)[0].split('&')[0]
-    var path = tempArr.slice(0, -1).join('%2F')   // 如  /文件夹
-    console.log(path, '---', _name)
+  var _id = 309847; 
+  var tempArr = location.href.split('path=')[1].split('%2F')    // 获取到的是已经编码过的url
+  var name = tempArr.slice(-1)[0].split('&')[0]
+  var path = tempArr.slice(0, -1).join('%2F')   // 如  /文件夹
+  // console.log(path, '---', name)
 
-    var isHome = $('a[title="我的卡包"]').html(); 
-    // var _temp = isHome ? "" : $('span[title*="全部文件"]')[0].title.slice(4); 
-    var _temp = isHome ? "" : path; 
-    var _name = name; 
-    var _path = encodeURIComponent(_temp + '/' + _name); 
-    var _link = 'https://pcs.baidu.com/rest/2.0/pcs/file?method=download&app_id=' + _id + '&path=' + _path; console.log('下载地址为：'); 
-    console.log('%c%s', 'color:#00ff00;background-color:red;', _link); })();
+  // var isHome = $('a[title="我的卡包"]').html(); 
+  // var _temp = isHome ? "" : $('span[title*="全部文件"]')[0].title.slice(4); 
+  var isHome = tempArr[0]   // 如果是首页下的视频，则为 /文件名
+  var _temp = isHome ? "" : path; 
+  var _name = name; 
+  // var _path = encodeURIComponent(_temp + '/' + _name); 
+  var _path = _temp + '%2F' + _name
+  var _link = 'https://pcs.baidu.com/rest/2.0/pcs/file?method=download&app_id=' + _id + '&path=' + _path; 
+  console.log('%c 下载地址为',  'background: #222; color: #bada55', _link)
+  return _link
 }
 
-function copy(e) {
+function showModal() {
+  var message = `<div role="alert" class="el-message el-message--success" style="top: 230px; z-index: 2023;"><i class="el-message__icon el-icon-success"></i><p class="el-message__content">成功复制链接，可以直接下载或使用工具下载</p><!----></div>`
+  $(message).appendTo($('body'))
+  setTimeout(() => {``
+    $('.el-message').remove()
+  }, 3000)
+}
+
+function copy(link) {
   let transfer = document.createElement('input');
-  document.body.appendChild(transfer);
-  transfer.value = '1111';  // 这里表示想要复制的内容
+  document.body.insertBefore(transfer, document.body.firstElementChild);
+  transfer.value = link;  // 这里表示想要复制的内容
   transfer.focus();
   transfer.select();
   if (document.execCommand('copy')) {
@@ -60,6 +71,7 @@ function copy(e) {
   }
   transfer.blur();
   document.body.removeChild(transfer);
+  showModal()
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -126,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div id="inner"></div>
   </div>`)
   // 获取大文件直链
-  getDownloadUrl()
+  var _link = getDownloadUrl()
   $('#bnts-group button').on('click', function (e) {
     var current = e.currentTarget
     var speed = parseInt(current.dataset.value)
@@ -171,7 +183,11 @@ document.addEventListener('DOMContentLoaded', function () {
   })
   $('#copy_download_link').on('click', function (e) {
     e.preventDefault();
- 
-    // copy()
+    copy(_link)
+  })
+  $(document).on('click', function(e) {
+    if($(e.target).closest('.layui-form-select').length === 0) {
+      $('.layui-form-select').removeClass('layui-form-selected')
+    }
   })
 })

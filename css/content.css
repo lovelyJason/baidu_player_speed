@@ -22,6 +22,7 @@
   top: 10%;
   right: 10%;
 }
+
 .suspended-ball #inner {
   width: 30px;
   height: 30px;
@@ -38,6 +39,7 @@
   background-position-x: 50%;
   background-position-y: 50%;
 }
+
 .btn-primary {
   cursor: pointer;
   padding: 0.25rem 0.5rem;
@@ -57,6 +59,7 @@
   user-select: none;
   border: 1px solid transparent;
 }
+
 .btn-primary:hover {
   -webkit-box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1),
     0 3px 6px rgba(0, 0, 0, 0.08);
@@ -64,7 +67,218 @@
   -webkit-transform: translateY(-1px);
   transform: translateY(-1px);
 }
-.layui-form-item > .layui-inline:last-child {
+
+.layui-form-item>.layui-inline:last-child {
   float: right;
   line-height: 38px;
 }
+
+.el-message {
+  border-radius: 4px;
+  overflow: hidden
+}
+
+.el-progress-bar__inner::after {
+  height: 100%
+}
+
+.el-progress-bar__innerText {
+  color: #FFF;
+  font-size: 12px;
+  margin: 0 5px
+}
+
+@keyframes progress {
+  0% {
+    background-position: 0 0
+  }
+
+  100% {
+    background-position: 32px 0
+  }
+}
+
+.el-time-spinner {
+  width: 100%;
+  white-space: nowrap
+}
+
+.el-spinner-inner {
+  -webkit-animation: rotate 2s linear infinite;
+  animation: rotate 2s linear infinite;
+  width: 50px;
+  height: 50px
+}
+
+.el-spinner-inner .path {
+  stroke: #ececec;
+  stroke-linecap: round;
+  -webkit-animation: dash 1.5s ease-in-out infinite;
+  animation: dash 1.5s ease-in-out infinite
+}
+
+@-webkit-keyframes rotate {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg)
+  }
+}
+
+@keyframes rotate {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg)
+  }
+}
+
+@-webkit-keyframes dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0
+  }
+
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35
+  }
+
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0
+  }
+
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35
+  }
+
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124
+  }
+}
+
+.el-message {
+  min-width: 380px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #EBEEF5;
+  position: fixed;
+  left: 50%;
+  top: 20px;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  background-color: #edf2fc;
+  -webkit-transition: opacity .3s, top .4s, -webkit-transform .4s;
+  transition: opacity .3s, top .4s, -webkit-transform .4s;
+  transition: opacity .3s, transform .4s, top .4s;
+  transition: opacity .3s, transform .4s, top .4s, -webkit-transform .4s;
+  padding: 15px 15px 15px 20px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center
+}
+
+.el-message.is-center {
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center
+}
+
+.el-message.is-closable .el-message__content {
+  padding-right: 16px
+}
+
+.el-message p {
+  margin: 0
+}
+
+.el-message--info .el-message__content {
+  color: #909399
+}
+
+.el-message--success {
+  background-color: #f0f9eb;
+  border-color: #e1f3d8
+}
+
+.el-message--success .el-message__content {
+  color: #67C23A
+}
+
+.el-message--warning {
+  background-color: #fdf6ec;
+  border-color: #faecd8
+}
+
+.el-message--warning .el-message__content {
+  color: #E6A23C
+}
+
+.el-message--error {
+  background-color: #fef0f0;
+  border-color: #fde2e2
+}
+
+.el-message--error .el-message__content {
+  color: #F56C6C
+}
+
+.el-message__icon {
+  margin-right: 10px
+}
+
+.el-message__content {
+  padding: 0;
+  font-size: 14px;
+  line-height: 1
+}
+
+.el-message__closeBtn {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #C0C4CC;
+  font-size: 16px
+}
+
+.el-message__closeBtn:hover {
+  color: #909399
+}
+
+.el-message .el-icon-success {
+  color: #67C23A
+}
+
+.el-message .el-icon-error {
+  color: #F56C6C
+}
+
+.el-message .el-icon-info {
+  color: #909399
+}
+
+.el-message .el-icon-warning {
+  color: #E6A23C
+}
+
+.el-message-fade-enter,
+.el-message-fade-leave-active {
+  opacity: 0;
+  -webkit-transform: translate(-50%, -100%);
+  transform: translate(-50%, -100%)
