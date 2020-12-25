@@ -91,7 +91,6 @@ document.addEventListener('DOMContentLoaded', function () {
       <div class="layui-inline">
         <div class="layui-btn-group" id="bnts-group">
           <button id="speed_1.0" data-value="1.0" type="button" class="layui-btn layui-btn-warm">正常速度</button>
-          <button id="speed_1.5" data-value="1.5" type="button" class="layui-btn">1.5倍速</button>
           <button id="speed_2.0" data-value="2.0" type="button" class="layui-btn">2.0倍速</button>
         </div>
       </div>
@@ -111,7 +110,8 @@ document.addEventListener('DOMContentLoaded', function () {
               <dd lay-value="2.5" class="">2.5</dd><dd lay-value="2.6" class="">2.6</dd>
               <dd lay-value="2.7" class="">2.7</dd><dd lay-value="2.8" class="">2.8</dd>
               <dd lay-value="2.9" class="">2.9</dd><dd lay-value="3.0" class="">3.0</dd>
-              <dd lay-value="10.0" class="">10.0</dd><dd lay-value="20.0" class="">20.0</dd>
+              <dd lay-value="10.0" class="">10.0</dd><dd lay-value="15.0" class="">15.0</dd>
+              <dd lay-value="16.0" class="">16.0</dd><dd lay-value="18.0" class="">18.0</dd>
             </dl>
           </div>
         </div>
