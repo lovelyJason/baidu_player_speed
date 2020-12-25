@@ -1,7 +1,7 @@
 {
-  "name": "百度云盘倍速播放助手",
+  "name": "东奥倍速播放助手",
   "version": "1.0",
-  "description": "在线倍速播放百度网盘视频",
+  "description": "在线倍速播放东奥视频",
   "permissions": ["activeTab", "declarativeContent", "storage"],
   "background": {
     "scripts": ["background.js"],
@@ -23,7 +23,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://pan.baidu.com/play/*"],
+      "matches": ["http://jxjycwweb.dongao.com/*"],
       "js": ["js/jquery.min.js", "js/contentscript.js"],
       "css": ["css/content.css"],
       "run_at": "document_start"

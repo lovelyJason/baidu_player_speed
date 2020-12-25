@@ -81,9 +81,11 @@ document.addEventListener('DOMContentLoaded', function () {
   }, false)
 
   // console.log(window.videojs) undefined
-  var videoContent = document.getElementsByClassName('video-content')[0]
-  var videoTitle = document.getElementsByClassName('video-title')[0]
-  var videoWrapOuter = videoTitle.nextElementSibling
+  // var videoContent = document.getElementsByClassName('video-content')[0]
+  // var videoTitle = document.getElementsByClassName('video-title')[0]
+  // var videoWrapOuter = videoTitle.nextElementSibling
+  var videoContent = document.getElementsByClassName('wrap')[0]
+  var videoWrapOuter = document.getElementsByClassName('main')[0]
   var btns = parseDom(`<div class="baidu_player_speed ">
     <div class="layui-form-item">
       <div class="layui-inline">
@@ -109,6 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
               <dd lay-value="2.5" class="">2.5</dd><dd lay-value="2.6" class="">2.6</dd>
               <dd lay-value="2.7" class="">2.7</dd><dd lay-value="2.8" class="">2.8</dd>
               <dd lay-value="2.9" class="">2.9</dd><dd lay-value="3.0" class="">3.0</dd>
+              <dd lay-value="10.0" class="">10.0</dd><dd lay-value="20.0" class="">20.0</dd>
             </dl>
           </div>
         </div>
@@ -138,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div id="inner"></div>
   </div>`)
   // 获取大文件直链
-  var _link = getDownloadUrl()
+  // var _link = getDownloadUrl()
   $('#bnts-group button').on('click', function (e) {
     var current = e.currentTarget
     var speed = parseInt(current.dataset.value)
@@ -183,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function () {
   })
   $('#copy_download_link').on('click', function (e) {
     e.preventDefault();
-    copy(_link)
+    // copy(_link)
   })
   $(document).on('click', function(e) {
     if($(e.target).closest('.layui-form-select').length === 0) {

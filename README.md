@@ -1,12 +1,19 @@
-## 基本功能
+# 如何从0到1实现一个chrome扩展
 
-向百度云盘页面及视频上注入倍速播放的 dom 元素，支持自定义倍速
+## 要实现的功能
 
-## 开发文档
+向某网盘页面及视频上注入倍速播放的 dom 元素，支持自定义倍速，至于原理，实际上就是调用页面上的一个方法，这个视频看的很清楚了
+[哔哩哔哩](https://www.bilibili.com/video/BV1sT4y1g7J4?p=1&share_medium=iphone&share_plat=ios&share_source=COPY&share_tag=s_i&timestamp=1593432582&unique_k=8K40Y4)
 
-### 组件内容
+众所周知，非会员下的某盘不能倍速播放视频，然后就在想是不是写个chrome插件会比较方便一点
 
-#### manifest.json
+![](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/369b416c2d3349eeabc02c69a6a79af2~tplv-k3u1fbpfcp-watermark.image)
+
+本代码可以在<https://github.com/lovelyJason/baidu_player_speed.git>找到
+
+## 基本知识/组件
+
+### manifest.json
 
 ```json
 {
@@ -20,14 +27,14 @@
   },
   "page_action": {
     "default_popup": "popup.html",
-    "default_icon": {
+    "default_icon": {         // 插件栏上的icon图标
       "16": "images/get_started16.png",
       "32": "images/get_started32.png",
       "48": "images/get_started48.png",
       "128": "images/get_started128.png"
     }
   },
-  "icons": {
+  "icons": {    // 扩展管理页的插件图标
     "16": "images/get_started16.png",
     "32": "images/get_started32.png",
     "48": "images/get_started48.png",
@@ -38,13 +45,19 @@
 }
 ```
 
-#### background & event page
+manifest.json是必须的描述文件,用于配置chrome扩展,包括图标,行为等
+
+>  chrome扩展的组件,或者说展示形式,主要有以下几种
+
+### background & event page
 
 后台脚本是扩展的事件处理程序;它包含对扩展很重要的浏览器事件的监听器。它处于休眠状态，直到触发一个事件，然后执行指示的逻辑。有效的后台脚本只在需要时加载，在空闲时卸载。
+区别在于manifest.json中`persistent`属性值的不同
 
-此页面看不到（？？？）
+没有可见页面,只是一个执行后台脚本的一个页面
 
-##### 更新 background 脚本函数
+
+**更新 background 脚本函数**
 
 如果使用 extension.getBackgroundPage 从后台页面调用函数，请更新为 runtime.getBackgroundPage。 较新的方法会在返回非持久脚本之前将其激活。
 
@@ -61,73 +74,101 @@ chrome.runtime.getBackgroundPage(function (backgroundPage) {
 });
 ```
 
-#### popup
+### content
 
-插件弹窗页
-
-#### options
-
-插件详情页
-
-#### content
-
-对 web 页面进行读写的扩展使用内容脚本。内容脚本包含在已加载到浏览器的页面上下文中执行的 JavaScript。内容脚本读取和修改浏览器访问的 web 页面的 DOM
+对 web 页面进行读写的扩展使用内容脚本。内容脚本包含在已加载到浏览器的页面上下文中执行的 JavaScript。内容脚本读取和修改浏览器访问的 web 页面的 DOM.可以把他理解为就是你写了一段dom,并且包含这段dom的脚本,注入到了原始页面中
 
 内容脚本可以通过交换消息和使用存储 API 存储值与父扩展进行通信。
 
-- content-scripts 和原始页面共享 dom 但是不共享 js，如果要访问 js 如变量等，只能通过 injected js 实现
+- content-scripts 和原始页面共享 dom 但是不共享 js，如果要访问 js 如变量等，只能通过后文的 `injected js` 实现
 - 访问 chrome 有限 api，extension,i18n, runtime, storage。如果调用其他 api，可以与 background 通信，通过 background 调用
 - 注入脚本有两种方式，编程式和声明式
   - 编程式：要在 manifest.json 中提供 permission 权限，设置为'activeTab'
-  ```javascript
-    // background.js
-    chrome.runtime.onMessage.addListener(
-    function(string message, callback) {
-      if (message == "changeColor"){
-        chrome.tabs.executeScript({
-          code: 'document.body.style.backgroundColor="orange"'
-        });
-      }
-    });
-    // popup.js
-    chrome.runtime.sendMessage("changeColor", function(response) {
-      console.log(response.farewell);
-    });
-  ```
+```javascript
+  // background.js
+  chrome.runtime.onMessage.addListener(
+  function(string message, callback) {
+    if (message == "changeColor"){
+      chrome.tabs.executeScript({
+        code: 'document.body.style.backgroundColor="orange"'
+      });
+    }
+  });
+  // popup.js
+  chrome.runtime.sendMessage("changeColor", function(response) {
+    console.log(response.farewell);
+  });
+```
   - 声明式注入的脚本在清单的“content_scripts”字段下面注册。它们可以包含 JavaScript 文件、CSS 文件，或者两者都包含。所有自动运行的内容脚本都必须指定匹配模式。
     run_at 控制注入时机,默认 document_idle
     content-script 只能获取到原始页面 dom，不能获取到 js
-  ```json
-   "content_scripts": [
-   {
-     "matches": ["http://*.nytimes.com/*"],
-     "css": ["myStyles.css"],
-     "js": ["contentScript.js"],
-     "run_at": "document_start"
-   }
-  ],
-  ```
-- 与嵌入页面的通信
+```json
+  "content_scripts": [
+  {
+    "matches": ["http://*.nytimes.com/*"],     // 匹配到页面时才生成插件脚本
+    "css": ["myStyles.css"],
+    "js": ["contentScript.js"],
+    "run_at": "document_start"
+  }
+],
+```
+
+另外还有popup页(点击插件图标的弹窗页),options页(点击扩展的详情之后的页面)就不做过多介绍了,用法都差不多,可以参考github上的项目
+
+比如popup,先在manifest.json中配置,然后popup.html中可以script标签引入自己项目中的脚本,就能生成一个弹窗页了
+
+```json
+"page_action": {
+  "default_popup": "popup.html"
+},
+```
+
+> 与嵌入的原始页面间的通信
   通过 window.postMessage
 
-##### chrome 插件访问原始页面变量
+### chrome 插件访问原始页面变量/函数等
 
-- 创建并插入 script 元素，执行其中 js 代码，可以传递消息或其他方式缓存书籍，然后删除元素.需注意，原始页面中的 js 变量可能不是立马生成，需要定时器延缓获取时机
-这种方式只能传递某些类型如字符串，简单对象等，函数等无法传递，即使使用消息机制，函数也无法克隆
+因为谷歌的api是不让插件访问原始页面的变量的,但是很多插件都会有调用原始页面的方法或者获取js变量的需求,那么就要用类似破解的一些方法.就是在content.js执行过程中,插入script标签对到原始页面中,因为content.js虽然无法获取原始页面的函数,变量等,但是可以访问到dom,也就可以进行dom操作
 
-- 创建元素并设置 onclick 属性，实测在 chrome 插件中无效，元素无 onclick 方法
+如插入script标签对到原始页面中，并在里面插入自己的逻辑代码，以下称为inject-script.js
 
-- 终极大法：无论是什么方式传递，只能传递字符串或者JSON字符串
-  inject-script中创建元素，并通过addEventListener绑定原页面中的函数，在content-script中通过寻找该dom，并触发其事件，注意不能直接调用其onclick方法，其指向为null,后文会说到，chrome插件中在html中写的内联事件无效
-  然后这样也有问题，如果采用js原生，如注册click事件，是无法主动dispatch或trigger的，jquery提供了trigger主动触发事件
+```javascript
+// content.js
+function injectCustomJs(jsPath, callback) {
+  jsPath = jsPath || 'js/injectscript.js';
+  var script = document.createElement('script');
+  script.setAttribute('type', 'text/javascript');
+  // 获得的地址类似：chrome-extension://ihcokhadfjfchaeagdoclpnjdiokfakg/js/inject.js
+  script.src = chrome.extension.getURL(jsPath);
+  script.onload = function () {
+    // 放在页面不好看，执行完后移除掉
+    this.parentNode.removeChild(this);
+    setTimeout(function () {
+      callback()
+    }, 3600)
+  };
+  document.head.appendChild(script);
+}
 
-  介绍一下inject-script和content-script之间的通信问题，因为页面(包括inject-script)和content-script处在两个沙盒，彼此不共享变量，无法互相访问，可以通过消息机制发送和接收；这里又遇到问题终止了，函数无法被克隆并传递，又回到最初的起点
+// 在content.js初始化调用
+document.addEventListener('DOMContentLoaded', function () {
+    injectCustomJs(null, function () {})
+}
+```
 
-  在content-script中根据时机postMessage，inject-script中监听即可调用页面中函数或获取变量而无需传递
+先说一下我尝试的一些方法,
+
+- 创建并插入 script 元素，执行其中 js 代码，可以传递消息或其他方式缓存书籍，然后删除元素.需注意，原始页面中的 js 变量可能不是立马生成，需要定时器延缓获取时机.这种方式只能传递某些类型如字符串，简单对象(会自动序列化)等，函数等无法传递，即使使用消息机制，函数也无法克隆
+
+- 创建元素并设置 onclick 属性，然后在某一时机调用这个元素的onclick方法.实测在 chrome 插件中无效，元素无 onclick 方法,指向为null,即无法绑定内联事件
+
+- 创建script元素，并通过addEventListener绑定原页面中的函数，在content-script中通过寻找该dom，并触发其事件(如果采用js原生，如注册click事件，是无法主动dispatch或trigger的，jquery提供了trigger主动触发事件).然而这样也有问题,这里存在着inject-script(本质上是向页面注入dom,也是原始页面)和content-script之间的通信问题，原始页面(包括inject-script)和content-script处在两个沙盒，彼此不共享变量，无法互相访问.虽然可以通过消息机制发送和接收,比如自定义的事件而不是onclick这些系统内置事件,结果仍然不行,无法传递js的变量,函数等，又回到最初的起点
+
+- 终极大法：总而言之，无论是什么方式传递，只能传递字符串或者JSON字符串 在content-script中根据时机（如点击你注入的一个按钮）进行postMessage，inject-script中监听即可直接调用原始页面中函数或获取变量即可而无需传递
 
   注入的样式被称为injected stylesheet，在chrome开发工具中无法修改
 
-#### chrome api
+## chrome api
 
 扩展程序除了可以访问与网页相同的 API 外，还可以使用特定于扩展程序的 API，这些 API 可以与浏览器紧密集成。 扩展程序和网页都可以访问标准 window.open（）方法来打开 URL，但是扩展程序可以使用 Chrome API tabs.create 方法来指定显示 URL 的窗口。
 
@@ -173,11 +214,11 @@ chrome: {
 }
 ```
 
-### 页面间通信
+## chrome扩展页面间通信
 
 扩展中的不同组件常常需要彼此通信。不同的 HTML 页面可以通过 chrome 找到彼此。扩展方法，如 getViews()和 getBackgroundPage()。一旦一个页面引用了其他扩展页面，第一个页面就可以调用其他页面上的函数并操作它们的 dom。此外，扩展的所有组件都可以访问使用存储 API 存储的值，并通过 message passing.进行通信。
 
-### 一些总结
+## 一些总结
 
 background 和 event pages 没有可见页面，区别在于，前者长时间挂载可能影响性能，在配置文件的区别上，后者仅多了一个`persistent`参数，指定为 false;另外，event pages 特点是， 后台页面在需要时被加载，在空闲时被卸载。事件的一些例子包括
 
@@ -193,6 +234,7 @@ background 和 event pages 没有可见页面，区别在于，前者长时间�
 **侦听器必须从页面的开始并且同步注册**
 
 ```javascript
+// background.js
 chrome.runtime.onInstalled.addListener(function () {
   chrome.contextMenus.create({
     id: "sampleContextMenu",
@@ -227,6 +269,47 @@ chrome.runtime.onMessage.addListener(function (message, sender, reply) {
 });
 ```
 
-**background 和 popup 无法直接访问页面 dom，但是可以通过 chrome.tabs.executeScript 执行脚本，从而访问页面 dom，但也不能直接访问页面 js**
+**background 和 popup 无法直接访问页面 dom，但是可以通过 chrome.tabs.executeScript 执行脚本，如一开始的示例`chrome.tabs.executeScript`，从而访问页面 dom，但也不能直接访问页面 js**
 
 **不支持将js写在内联html中，或者通过setAttribute形式**
+
+更多内容可访问官方文档<https://developer.chrome.com/extensions>
+
+因此我的插件伪代码应该是这样的
+
+```javascript
+// content.js
+
+// 1.注入dom，插入样式，注册事件等...
+
+// 2.向inject.script.js发送消息，表示在某个时机要在原页面执行某个操作
+$('div').on('click', function (e) {
+  window.postMessage({ type: 'to_inject', speed: speed }, '*')
+})
+
+```
+
+```javascript
+// inject-script.js
+setTimeout(() => {
+  // 插入到原始页面的script标签对之后，代码执行到这里来，页面上的dom结构未必加载完全，因此页面上的dom节点或者js变量都未生成，需要定时器
+  // 可以获取dom和任意原始页面中可以获取到的js变量，调用函数等操作
+  window.addEventListener("message", function(e) {
+    // inject-script（也就是原始页面）接收到消息
+    if(e.data && e.data.type === 'to_inject') {
+      // 执行原页面的某个函数调用
+    }
+  }, false);
+}, 3000)
+```
+
+## chrome扩展打包/发布/使用
+
+- 打包可以通过chrome扩展管理界面打包和加载，打包扩展程序会将项目文件夹打包为crx后缀文件
+以前的chrome浏览器在打开开发者模式下，直接拖入crx即可安装扩展，现在没有上架chrome扩展商店的应用无法安装
+
+- 至于发布，需要有visa等信用卡付款才能上架应用，还是比较难搞的
+
+- 使用，插件源码<https://github.com/lovelyJason/baidu_player_speed.git> 在chrome扩展管理界面导入文件夹，然后勾选插件的启用，在播放网盘视频的界面就可以看到效果啦
+
+![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/68f1f8929eec49dda3f5e4618eac979d~tplv-k3u1fbpfcp-watermark.image)
