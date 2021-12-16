@@ -5,9 +5,10 @@ setTimeout(function() {
   // console.log(videojs.getPlayers("video-player"))
   var tmp = document.createElement('div')
   tmp.id = 'speed_ele'
-  var speedFunc = function(speed) {videojs.getPlayers("video-player").html5player.tech_.setPlaybackRate(speed);}
+  // var speedFunc = function(speed) {videojs.getPlayers("video-player").html5player.tech_.setPlaybackRate(speed);}
   // var _playspeed = new Event('playspeed',  {"bubbles":true, "cancelable":false})
   // tmp.addEventListener('playspeed', speed)
+  var speedFunc = function(speed) {videojs.getPlayer('videoPlayer').tech_.el_.playbackRate = speed;}
   tmp.setAttribute('onclick', speedFunc)
   document.body.appendChild(tmp)
   
