@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
   injectLayui()
   injectCustomJs(null, function () {
     var btns = `<div class="baidu_player_speed style="margin-top: 2px;">
-      <div class="layui-form-item" style="width: 800px;">
+      <div class="layui-form-item" style="width: 1000px;">
         <div class="layui-inline">
           <div class="layui-btn-group" id="bnts-group">
             <button id="speed_1.0" data-value="1.0" type="button" class="layui-btn layui-btn-warm">正常速度</button>
@@ -111,9 +111,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 <dd lay-value="10.0" class="">10.0</dd>
                 <dd lay-value="12.0" class="">12.0</dd>
                 <dd lay-value="16.0" class="">16.0</dd>
+                <dd lay-value="20.0" class="">20.0</dd>
               </dl>
             </div>
           </div>
+        </div>
+        <div class="layui-inline" style="color: #009688;">
+          切换下个视频后需要再手动切换倍速
         </div>
       </div>
     </div>`
