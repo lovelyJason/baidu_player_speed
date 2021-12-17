@@ -23,7 +23,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://pan.baidu.com/play/*"],
+      "matches": ["https://pan.baidu.com/play/*", "https://kdhrtrain.kingdee.com/*"],
       "js": ["js/jquery.min.js", "js/contentscript.js"],
       "css": ["css/content.css"],
       "run_at": "document_start"
