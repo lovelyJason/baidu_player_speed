@@ -14,8 +14,12 @@ setTimeout(function() {
   
   window.addEventListener("message", function(e) {
     if(e.data && e.data.type === 'to_inject') {
-      var speed = e.data.speed
-      speedFunc(speed)
+      try {
+        var speed = e.data.speed
+        speedFunc(speed)
+      } catch (error) {
+        alert('数值过大,请弄小一点')
+      }
     }
   }, false);
 }, 3600)
